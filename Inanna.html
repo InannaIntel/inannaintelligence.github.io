@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inanna Intelligence — Data & Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f1f3d;
+    --surface: #f7f4f0;
+    --accent: #b89a6e;
+    --accent-light: #d4bc96;
+    --accent-pale: #f5f0e6;
+    --gold: #b89a6e;
+    --gold-light: #d4bc96;
+    --navy-mid: #1e3a6e;
+    --navy-light: #4a6fa5;
+    --muted: #6b7280;
+    --border: rgba(15,31,61,0.10);
+    --border-strong: rgba(15,31,61,0.18);
+    --ff-display: 'Cormorant Garamond', Georgia, serif;
+    --ff-body: 'DM Sans', sans-serif;
+    --ff-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--ff-body);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 60px;
+    background: rgba(247,244,240,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: padding 0.3s ease;
+  }
+
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-cta:hover { background: var(--ink); color: var(--surface); }
+
+  /* ── HERO — full navy embossed splash ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 40px;
+    position: relative;
+    overflow: hidden;
+    background: #0d1b35;
+  }
+
+  /* Leather/paper texture via SVG turbulence */
+  #hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23t)' opacity='0.07'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Subtle vignette */
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(5,12,28,0.55) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: heroFadeIn 1.6s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SVG logo mark — embossed pillar/flower icon */
+  .hero-mark {
+    width: 90px;
+    height: 140px;
+    margin-bottom: 32px;
+    filter:
+      drop-shadow(0px 2px 0px rgba(255,255,255,0.07))
+      drop-shadow(0px -1px 0px rgba(0,0,0,0.5));
+  }
+
+  /* INANNA wordmark */
+  .hero-wordmark {
+    font-family: var(--ff-display);
+    font-size: clamp(56px, 12vw, 140px);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: #1a3260;
+    line-height: 1;
+    text-transform: uppercase;
+    /* Embossed effect: light top-left, dark bottom-right */
+    text-shadow:
+      0px 1px 0px rgba(255,255,255,0.09),
+      0px -1px 0px rgba(0,0,0,0.45),
+      1px 0px 0px rgba(255,255,255,0.05),
+      -1px 0px 0px rgba(0,0,0,0.3),
+      0px 2px 4px rgba(0,0,0,0.4);
+    margin-bottom: 8px;
+    animation: heroFadeIn 1.8s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  /* — INTELLIGENCE — subtitle with rules */
+  .hero-sub-lockup {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 64px;
+    animation: heroFadeIn 1.8s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .hero-rule {
+    width: 60px;
+    height: 1px;
+    background: rgba(184,154,110,0.35);
+  }
+  .hero-intelligence {
+    font-family: var(--ff-mono);
+    font-size: clamp(10px, 1.5vw, 14px);
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: #2a4878;
+    text-shadow:
+      0px 1px 0px rgba(255,255,255,0.06),
+      0px -1px 0px rgba(0,0,0,0.4);
+  }
+
+  /* CTA buttons — sits below the lockup */
+  .hero-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    animation: heroFadeIn 1.8s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 16px 44px;
+    background: var(--gold);
+    color: #0d1b35;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-block;
+    padding: 16px 44px;
+    border: 1px solid rgba(184,154,110,0.35);
+    color: rgba(184,154,110,0.8);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* scroll cue */
+  .hero-scroll {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: heroFadeIn 2s 0.6s both;
+  }
+  .hero-scroll span {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(184,154,110,0.4);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(184,154,110,0.35), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+
+  /* Nav overrides for dark hero */
+  nav {
+    background: rgba(13,27,53,0.88) !important;
+    border-bottom-color: rgba(184,154,110,0.12) !important;
+  }
+  .nav-logo { color: rgba(247,244,240,0.75) !important; }
+  .nav-links a { color: rgba(184,154,110,0.55) !important; }
+  .nav-links a:hover { color: var(--gold) !important; }
+  .nav-cta {
+    border-color: rgba(184,154,110,0.4) !important;
+    color: rgba(184,154,110,0.8) !important;
+  }
+  .nav-cta:hover { background: var(--gold) !important; color: #0d1b35 !important; border-color: var(--gold) !important; }
+
+  /* ── SECTION SHARED ── */
+  section { position: relative; }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 60px;
+  }
+
+  .section-label {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-heading {
+    font-family: var(--ff-display);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+  .section-heading em { font-style: italic; color: var(--accent); }
+
+  /* ── TICKER ── */
+  #ticker {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--ink);
+    padding: 14px 0;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    white-space: nowrap;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker-item {
+    font-family: var(--ff-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(247,244,240,0.5);
+    padding: 0 48px;
+    flex-shrink: 0;
+  }
+  .ticker-item span { color: var(--accent-light); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── SERVICES ── */
+  #services { background: var(--surface); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 64px;
+  }
+
+  .service-card {
+    background: var(--surface);
+    padding: 48px 40px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { background: #f0ead8; }
+
+  .service-num {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+  }
+
+  .service-title {
+    font-family: var(--ff-display);
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .service-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  .service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid var(--border-strong);
+    color: var(--muted);
+  }
+
+  /* ── ABOUT ── */
+  #about { background: var(--ink); }
+  #about .section-heading { color: var(--surface); }
+  #about .section-label { color: var(--accent-light); }
+  #about .section-label::before { background: var(--accent-light); }
+
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+    margin-top: 64px;
+  }
+
+  .about-body {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(247,244,240,0.7);
+    line-height: 1.9;
+  }
+  .about-body p + p { margin-top: 20px; }
+
+  .about-visual {
+    position: relative;
+    height: 400px;
+  }
+
+  .about-chart {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 0 0 40px;
+  }
+
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .chart-bar {
+    width: 100%;
+    background: rgba(184,154,110,0.12);
+    border: 1px solid rgba(184,154,110,0.28);
+    border-bottom: none;
+    position: relative;
+    transition: background 0.3s;
+    animation: barrise 1.2s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .chart-bar:hover { background: rgba(184,154,110,0.28); }
+  .chart-bar.accent { background: rgba(184,154,110,0.35); border-color: var(--accent); }
+  .chart-bar-label {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(247,244,240,0.35);
+    text-align: center;
+  }
+
+  @keyframes barrise {
+    from { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    to   { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  }
+
+  .chart-baseline {
+    position: absolute;
+    bottom: 40px; left: 0; right: 0;
+    height: 1px;
+    background: rgba(247,244,240,0.12);
+  }
+
+  .about-values {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(247,244,240,0.08);
+  }
+  .value-name {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(247,244,240,0.55);
+    letter-spacing: 0.04em;
+  }
+  .value-bar-wrap { width: 160px; height: 2px; background: rgba(247,244,240,0.1); }
+  .value-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--navy-light));
+    animation: barwiden 1.4s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  @keyframes barwiden {
+    from { width: 0; }
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--accent-pale); }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+    margin-top: 64px;
+  }
+
+  .contact-info p {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 40px;
+  }
+
+  .contact-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .contact-row strong {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    min-width: 70px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .form-group label {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 12px 0;
+    font-family: var(--ff-body);
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-bottom-color: var(--accent);
+  }
+  .form-group textarea { resize: none; height: 80px; }
+
+  .form-submit {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 44px;
+    background: var(--ink);
+    color: var(--surface);
+    font-family: var(--ff-body);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .form-submit:hover { background: var(--accent); }
+  .form-submit svg { transition: transform 0.2s; }
+  .form-submit:hover svg { transform: translateX(4px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(247,244,240,0.06);
+  }
+
+  .footer-logo {
+    font-family: var(--ff-display);
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(247,244,240,0.6);
+    letter-spacing: 0.04em;
+  }
+  .footer-logo span { color: var(--accent); }
+
+  .footer-copy {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(247,244,240,0.28);
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 28px; }
+    .nav-links { display: none; }
+    .section-inner { padding: 80px 28px; }
+    #hero { padding: 0 28px 60px; }
+
+    .services-grid { grid-template-columns: 1fr; }
+    .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    .about-visual { height: 260px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; padding: 40px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#hero" class="nav-logo">Inanna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get in touch</a>
+</nav>
+
+<!-- HERO — full navy embossed splash -->
+<section id="hero">
+  <div class="hero-content">
+
+    <!-- SVG pillar/flower mark inspired by logo -->
+    <svg class="hero-mark" viewBox="0 0 90 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <filter id="emboss">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+          <feOffset dx="0" dy="1" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+      <g filter="url(#emboss)" opacity="0.85">
+        <!-- Spire tip -->
+        <polygon points="45,2 41,14 49,14" fill="#1e3460" stroke="#243d70" stroke-width="0.5"/>
+        <!-- Spire upper -->
+        <rect x="42" y="13" width="6" height="8" rx="1" fill="#1a3058" stroke="#243d70" stroke-width="0.4"/>
+        <!-- Diamond -->
+        <polygon points="45,22 48,27 45,32 42,27" fill="#1e3460" stroke="#2a4478" stroke-width="0.5"/>
+        <!-- Column top capital -->
+        <rect x="34" y="31" width="22" height="5" rx="1.5" fill="#1a3058" stroke="#2a4478" stroke-width="0.4"/>
+        <!-- Column shafts (3 lines) -->
+        <rect x="38" y="36" width="3" height="28" rx="1" fill="#19305a"/>
+        <rect x="43.5" y="36" width="3" height="28" rx="1" fill="#1a3260"/>
+        <rect x="49" y="36" width="3" height="28" rx="1" fill="#19305a"/>
+        <!-- Flower / rosette center -->
+        <circle cx="45" cy="76" r="6" fill="#192e58" stroke="#2a4478" stroke-width="0.5"/>
+        <!-- Petals -->
+        <ellipse cx="45" cy="66" rx="4" ry="7" fill="#1a3260" opacity="0.9"/>
+        <ellipse cx="45" cy="86" rx="4" ry="7" fill="#1a3260" opacity="0.9"/>
+        <ellipse cx="35" cy="76" rx="7" ry="4" fill="#1a3260" opacity="0.9"/>
+        <ellipse cx="55" cy="76" rx="7" ry="4" fill="#1a3260" opacity="0.9"/>
+        <ellipse cx="38.5" cy="69.5" rx="4" ry="6.5" fill="#1a3260" opacity="0.75" transform="rotate(-45 38.5 69.5)"/>
+        <ellipse cx="51.5" cy="69.5" rx="4" ry="6.5" fill="#1a3260" opacity="0.75" transform="rotate(45 51.5 69.5)"/>
+        <ellipse cx="38.5" cy="82.5" rx="4" ry="6.5" fill="#1a3260" opacity="0.75" transform="rotate(45 38.5 82.5)"/>
+        <ellipse cx="51.5" cy="82.5" rx="4" ry="6.5" fill="#1a3260" opacity="0.75" transform="rotate(-45 51.5 82.5)"/>
+        <!-- Flower center dot -->
+        <circle cx="45" cy="76" r="3" fill="#1e3870" stroke="#2a4a88" stroke-width="0.5"/>
+        <!-- Column lower shaft -->
+        <rect x="38" y="84" width="3" height="22" rx="1" fill="#19305a"/>
+        <rect x="43.5" y="84" width="3" height="22" rx="1" fill="#1a3260"/>
+        <rect x="49" y="84" width="3" height="22" rx="1" fill="#19305a"/>
+        <!-- Base capital -->
+        <rect x="34" y="106" width="22" height="5" rx="1.5" fill="#1a3058" stroke="#2a4478" stroke-width="0.4"/>
+        <!-- Plinth -->
+        <rect x="30" y="111" width="30" height="7" rx="2" fill="#18305a" stroke="#243d70" stroke-width="0.5"/>
+        <!-- Base platform -->
+        <rect x="25" y="118" width="40" height="5" rx="1.5" fill="#172c52" stroke="#243d70" stroke-width="0.5"/>
+      </g>
+      <!-- Light highlight on left edge of column -->
+      <line x1="38" y1="36" x2="38" y2="64" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+      <line x1="38" y1="84" x2="38" y2="106" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    </svg>
+
+    <h1 class="hero-wordmark">Inanna</h1>
+
+    <div class="hero-sub-lockup">
+      <div class="hero-rule"></div>
+      <span class="hero-intelligence">Intelligence</span>
+      <div class="hero-rule"></div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="#services" class="btn-primary">Our services</a>
+      <a href="#contact" class="btn-ghost">Start a project</a>
+    </div>
+
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div id="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">Data Strategy</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Predictive Analytics</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Business Intelligence</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Data Architecture</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">ML & AI Integration</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Real-time Dashboards</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Data Governance</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">Data Strategy</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Predictive Analytics</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Business Intelligence</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Data Architecture</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">ML & AI Integration</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Real-time Dashboards</span>
+    <span class="ticker-item"><span>◆</span></span>
+    <span class="ticker-item">Data Governance</span>
+    <span class="ticker-item"><span>◆</span></span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-inner">
+    <div class="section-label reveal">What we do</div>
+    <h2 class="section-heading reveal reveal-delay-1">Intelligence<br>built to <em>scale.</em></h2>
+
+    <div class="services-grid">
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">01</div>
+        <h3 class="service-title">Data Strategy & Architecture</h3>
+        <p class="service-desc">We design the foundations — data pipelines, warehouses, and governance frameworks — that transform fragmented data into a unified strategic asset.</p>
+        <div class="service-tags">
+          <span class="tag">Data Lakes</span>
+          <span class="tag">ETL Design</span>
+          <span class="tag">Governance</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">02</div>
+        <h3 class="service-title">Predictive Analytics</h3>
+        <p class="service-desc">Using statistical modeling and machine learning, we build systems that don't just describe what happened — they anticipate what comes next.</p>
+        <div class="service-tags">
+          <span class="tag">Forecasting</span>
+          <span class="tag">ML Models</span>
+          <span class="tag">Risk Analysis</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-num">03</div>
+        <h3 class="service-title">Business Intelligence</h3>
+        <p class="service-desc">Custom dashboards, reporting ecosystems, and KPI frameworks that make complex data intuitive for every level of your organization.</p>
+        <div class="service-tags">
+          <span class="tag">Dashboards</span>
+          <span class="tag">Tableau</span>
+          <span class="tag">Power BI</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">04</div>
+        <h3 class="service-title">AI & ML Integration</h3>
+        <p class="service-desc">Embedding intelligent models into your existing workflows — from natural language processing to computer vision and recommendation engines.</p>
+        <div class="service-tags">
+          <span class="tag">LLM Integration</span>
+          <span class="tag">NLP</span>
+          <span class="tag">AutoML</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">05</div>
+        <h3 class="service-title">Data Quality & Governance</h3>
+        <p class="service-desc">Establishing trust in your data through rigorous quality frameworks, lineage tracking, and compliance-ready governance structures.</p>
+        <div class="service-tags">
+          <span class="tag">Data Catalog</span>
+          <span class="tag">Lineage</span>
+          <span class="tag">Compliance</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-num">06</div>
+        <h3 class="service-title">Real-time Analytics</h3>
+        <p class="service-desc">Stream processing and live analytics infrastructure that brings insight to the speed of your operations — no latency, no guesswork.</p>
+        <div class="service-tags">
+          <span class="tag">Streaming</span>
+          <span class="tag">Kafka</span>
+          <span class="tag">Event-driven</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label reveal">About us</div>
+    <h2 class="section-heading reveal reveal-delay-1">Precision<br>by <em>design.</em></h2>
+
+    <div class="about-layout">
+      <div>
+        <div class="about-body reveal reveal-delay-1">
+          <p>Inanna Intelligence was founded on a single conviction: that data, handled with rigor and elegance, is the most powerful competitive advantage available to any organization.</p>
+          <p>We are a boutique analytics firm specializing in the full data lifecycle — from architecture and collection through to the insights that drive decisions at the highest level.</p>
+          <p>Our team brings together expertise across data engineering, statistical modeling, and strategic consulting. We partner deeply with clients, embedding ourselves in their context to deliver work that is not just technically excellent, but genuinely transformative.</p>
+        </div>
+
+        <div class="about-values reveal reveal-delay-2">
+          <div class="value-row">
+            <span class="value-name">Data Engineering</span>
+            <div class="value-bar-wrap"><div class="value-bar" style="width:92%"></div></div>
+          </div>
+          <div class="value-row">
+            <span class="value-name">Predictive Modeling</span>
+            <div class="value-bar-wrap"><div class="value-bar" style="width:88%"></div></div>
+          </div>
+          <div class="value-row">
+            <span class="value-name">Business Intelligence</span>
+            <div class="value-bar-wrap"><div class="value-bar" style="width:95%"></div></div>
+          </div>
+          <div class="value-row">
+            <span class="value-name">AI / ML Integration</span>
+            <div class="value-bar-wrap"><div class="value-bar" style="width:80%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-visual reveal reveal-delay-2">
+        <div class="about-chart">
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:55%; animation-delay:0.1s"></div>
+            <span class="chart-bar-label">Q1</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:72%; animation-delay:0.2s"></div>
+            <span class="chart-bar-label">Q2</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar accent" style="height:88%; animation-delay:0.3s"></div>
+            <span class="chart-bar-label">Q3</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:65%; animation-delay:0.4s"></div>
+            <span class="chart-bar-label">Q4</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:78%; animation-delay:0.5s"></div>
+            <span class="chart-bar-label">Q1</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar accent" style="height:95%; animation-delay:0.6s"></div>
+            <span class="chart-bar-label">Q2</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar" style="height:82%; animation-delay:0.7s"></div>
+            <span class="chart-bar-label">Q3</span>
+          </div>
+          <div class="chart-bar-wrap">
+            <div class="chart-bar accent" style="height:100%; animation-delay:0.8s"></div>
+            <span class="chart-bar-label">Q4</span>
+          </div>
+        </div>
+        <div class="chart-baseline"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-label reveal">Get in touch</div>
+    <h2 class="section-heading reveal reveal-delay-1">Let's build something<br><em>extraordinary.</em></h2>
+
+    <div class="contact-layout">
+      <div class="contact-info reveal reveal-delay-1">
+        <p>Whether you're looking to build a data practice from the ground up, or elevate an existing one — we'd love to hear about your challenge.</p>
+        <div class="contact-detail">
+          <div class="contact-row">
+            <strong>Email</strong>
+            <span>hello@inannaintelligence.com</span>
+          </div>
+          <div class="contact-row">
+            <strong>Location</strong>
+            <span>Los Angeles, California</span>
+          </div>
+          <div class="contact-row">
+            <strong>Inquiries</strong>
+            <span>New projects &amp; partnerships</span>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-2" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="name">Full name</label>
+          <input type="text" id="name" placeholder="Jane Smith" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="jane@company.com" required>
+        </div>
+        <div class="form-group">
+          <label for="service">Service interest</label>
+          <select id="service">
+            <option value="">Select a service</option>
+            <option>Data Strategy & Architecture</option>
+            <option>Predictive Analytics</option>
+            <option>Business Intelligence</option>
+            <option>AI & ML Integration</option>
+            <option>Real-time Analytics</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Tell us about your project</label>
+          <textarea id="message" placeholder="Brief description of your goals..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">
+          Send message
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Inanna<span>.</span> Intelligence</div>
+  <div class="footer-copy">© 2026 Inanna Intelligence. All rights reserved.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Hero immediate reveal
+  document.querySelectorAll('#hero .reveal, #hero .hero-eyebrow, #hero .hero-headline, #hero .hero-sub, #hero .hero-actions').forEach(el => {
+    el.classList.add('visible');
+  });
+
+  // Form handler
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = 'Message sent ✓';
+    btn.style.background = '#1e3a6e';
+    setTimeout(() => {
+      btn.innerHTML = 'Send message <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      btn.style.background = '';
+      e.target.reset();
+    }, 3000);
+  }
+
+  // Nav scroll shrink
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.padding = window.scrollY > 60 ? '16px 60px' : '24px 60px';
+  });
+</script>
+</body>
+</html>
